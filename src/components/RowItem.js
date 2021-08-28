@@ -43,7 +43,7 @@ const RowItem = ({data}) => {
            
             {
                 expand && 
-                      <div className="row-grid top-bottom-brdrs">
+                      <div className="row-grid panel-shadow">
                           {
                               innerRow.map((item, i) => 
                                  <GridCell key={item.id} data={item}/>
