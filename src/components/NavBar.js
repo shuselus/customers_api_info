@@ -3,7 +3,6 @@ import NavTab from './NavTab';
 
 const NavBar = ({ tabs, updateSectionName }) => {
   const [activeTab, setActiveTab] = useState(tabs[0].name);
-  console.log("NavBar>>>", tabs);
 
   useEffect(() => {
     if(activeTab){
@@ -12,7 +11,6 @@ const NavBar = ({ tabs, updateSectionName }) => {
   },[activeTab])
 
   const tabAction = useCallback((tabName) => {
-        console.log("tabAction>>>", tabName);
         setActiveTab(tabName);
   },[activeTab])
 
@@ -20,7 +18,6 @@ const NavBar = ({ tabs, updateSectionName }) => {
     <div className="navbar-container white-bgr-clr shadow-bottom">
       {tabs?.length &&
         tabs.map((tab) => {
-            console.log("isActive",(activeTab === tab.name));
             return <NavTab
                 key={tab.id}
                 data={tab}

@@ -1,7 +1,6 @@
 import React from "react";
 
 const NavTab = ({ data, tabAction, isActive = false }) => {
-  console.log("NavTab>>>", data.name, isActive);
 
   return (
     <div className="tab-button" onClick={() => tabAction(data.name)}>

@@ -33,7 +33,6 @@ const MainArea = () => {
   },[apiDataMap]);
 
   useEffect(()=>{
-    console.log("MainData>>>>>by sectionName>>>>>", sectionName);
     if(sectionName && apiDataMap.size){
        updateCurrentSectionData(sectionName);
     }

@@ -6,8 +6,6 @@ const InfoGrid = ({dataMap}) => {
     const [columns, setColumns] = useState([]);
     const [rows, setRows] = useState([]);
     
-    console.log("InfoGrid>>>>>data ", dataMap);
-
     useEffect(() => {
         if(dataMap.size){
            updateColumns(dataMap);
@@ -30,7 +28,6 @@ const InfoGrid = ({dataMap}) => {
         setRows(()=>{
             const arr = [];
             dataMap.forEach((value, key)=>{
-                console.log(key ,":", value);
                     arr.push({id: nanoid(), name: key, value:value});
             })
             return arr;

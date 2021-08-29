@@ -9,20 +9,24 @@ import { nanoid } from "nanoid";
 const RowItem = ({data}) => {
     const [expand, setExpand] = useState(true);
     const [btnIsDisabled, setBtnIsDesabled] = useState(true)
-    const [innerRow, setInnerRow] = useState([]);
+    const [innerRows, setInnerRows] = useState([]);
     const dispatch = useDispatch();
 
     useEffect(() =>{
-        console.log("innerRow>>>", data.value);
-        if(Array.isArray(data.value) && data.value.length){
-            const dataMap = new Map(Object.entries(data.value[0]));
-            setInnerRow(()=>{
+        if(Array.isArray(data.value) && data.value.length > 0){
+            const dataMap = new Map(Object.entries(data.value));
+            //console.log("dataMap>>>>",dataMap)
+            setInnerRows(()=>{
+                
                 const arr = []
                 dataMap.forEach((value, key)=>{
-                    console.log("typeof key>>>",  key, value);
-                    arr.push({id: nanoid(), name: key, title: key.toUpperCase(), value:value})
+                    const innerArr = []
+                    for(const key in value){
+                        innerArr.push({id: nanoid(), name: key, title: key.toUpperCase(), value:value[key]});
+                    }
+                    arr.push(innerArr);
                 });
-                return arr;
+                return arr
             });
             setBtnIsDesabled(false);
         }
@@ -34,7 +38,6 @@ const RowItem = ({data}) => {
     }
 
     const updateRowData = useCallback((cellData) => {
-        console.log("updateRowData>>>>",cellData)
         if(cellData){
             const dataToUpdate = {name: data.name, subName: cellData.name, value: cellData.value};
             dispatch(updateCurrentSectionMap(dataToUpdate));
@@ -73,13 +76,19 @@ const RowItem = ({data}) => {
            
             {
                 expand && data.value.length > 0 &&
-                      <div className="row-grid panel-shadow row-grid-height mg-t">
-                          {
-                              innerRow.map((item) => 
-                                 <GridCell key={item.id} data={item} updateData={updateRowData}/>
+                      
+                          
+                              innerRows.map((item, index) => 
+                                <div key={nanoid()} className="row-grid panel-shadow row-grid-height mg-t">
+                                    {
+                                     item.map((row) => 
+                                        <GridCell key={row.id} data={row} updateData={updateRowData}/>
+                                      )
+                                    }
+                                </div> 
                               )
-                          }
-                      </div>  
+                          
+                       
             } 
              
         </div>

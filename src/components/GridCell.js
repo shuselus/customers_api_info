@@ -20,13 +20,17 @@ const GridCell = ({data, updateData}) => {
     return (
         <div className={`row-cell ${data.name === "type"? "justify-ctr" : ""}`}>
             {
-                data.name !== "name" 
+                data.name === "name" 
                 ?
-                <div className={`pii-masked-cont ${data.name}${data.name !== "type" ? "-"+value : ""}`} onClick={onClickHandler}>
+                <div className={"name"}>{value}</div>
+                :
+                data.name === "pii" || data.name === "masked"
+                ?
+                <div className={`pii-masked-cont ${data.name}-${value}`} onClick={onClickHandler}>
                        {data.name !== "type" ? data.title : value}
                 </div>
                 :
-                <div className={"name"}>{value}</div>
+                <div className={"type"}>{value}</div>
 
             }
             

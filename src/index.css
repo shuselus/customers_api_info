@@ -192,6 +192,10 @@
 .type{
   background-color: #cee5ec;
   color: #50a3bd;
+  width: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .name{
   color: #5f5f5f;
