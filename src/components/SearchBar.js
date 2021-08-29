@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { currentSectionData as sectionData} from "../actions/appActions";
+import { currentSectionData } from "../actions/appActions";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 
 const SearchBar = ({sectionName}) => {
-  const currentSectionData = useSelector(state => state.currentSectionDataReducer);
+  const sectionData = useSelector(state => state.currentSectionDataReducer);
   const apiData = useSelector(state => state.apiDataReducer);
   const [inputValue, setInputValue] = useState("");
   const [checked, setChecked] = useState(false);
@@ -13,10 +13,10 @@ const SearchBar = ({sectionName}) => {
   const [currentSectionMap, setCurrentSectionMap] = useState(new Map());
   const [warninMsg, setWarninMsg] = useState("");
   const dispatch = useDispatch();
-  
+
   useEffect(()=>{
-      setCurrentSectionMap(new Map(Object.entries(currentSectionData)));
-  },[currentSectionData]);
+      setCurrentSectionMap(new Map(Object.entries(sectionData)));
+  },[sectionData]);
 
   useEffect(()=>{
       setBtnDisabled(inputValue === "")
@@ -79,7 +79,7 @@ const SearchBar = ({sectionName}) => {
           } 
         }
         if(Object.entries(obj).length > 0){
-          dispatch(sectionData(obj));
+          dispatch(currentSectionData(obj));
         }else{
           setWarninMsg(`There is no matches was found`);
         }
@@ -90,14 +90,12 @@ const SearchBar = ({sectionName}) => {
 
         let inputValueKey = "";
         for(const [key, value]  of _currentSectionMap){
-          console.log("onSearchApply>>>>", test(key, inputValue))
           if(test(key, inputValue)) inputValueKey = key;
         }
         if(inputValueKey !== ""){
-          console.log("search>>>>",inputValueKey);
           obj = {[inputValueKey] : _currentSectionMap.get(inputValueKey)};
 
-          dispatch(sectionData(obj));          
+          dispatch(currentSectionData(obj));          
         }else{
           setWarninMsg(`input valid search term - (for example: ${[..._currentSectionMap.keys()].toString().split(",").join(", ")} or types: ${types.toString().split(",").join(", ")})`)
         }
@@ -107,7 +105,7 @@ const SearchBar = ({sectionName}) => {
   }
   
   const onResetFilter = () => {
-    dispatch(sectionData(apiData[sectionName]));
+    dispatch(currentSectionData(apiData[sectionName]));
     setInputValue("");
     setChecked(false);
   }
