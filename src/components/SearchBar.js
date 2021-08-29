@@ -59,10 +59,12 @@ const SearchBar = ({sectionName}) => {
     }
     
     if(Object.entries(obj).length > 0){
+      dispatch(currentSectionData(obj));
       _currentSectionMap = new Map(Object.entries(obj));
+    }else{
+      setWarninMsg(`There is no matches was found`);
     }
     types = [...new Set(types)];// get unic values
-
     if(inputValue !== ""){
 
       ////////////SEARCH BY PARAMETR TYPE///////////////////////////
@@ -99,6 +101,8 @@ const SearchBar = ({sectionName}) => {
         }else{
           setWarninMsg(`input valid search term - (for example: ${[..._currentSectionMap.keys()].toString().split(",").join(", ")} or types: ${types.toString().split(",").join(", ")})`)
         }
+
+
       }
     }
     setInputValue("");
