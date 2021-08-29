@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { isNotEmptyObject, capitalizeByIndex } from "../utils/common";
+import { capitalizeByIndex } from "../utils/common";
 
 // a. The method and path of the route
 // b. “Breadcrumbs”: All APIs > {apiName} > {path} - non clickable.
@@ -11,20 +11,16 @@ const Header = () => {
   const [path, setPath] = useState("");
 
   const apiData = useSelector((state) => state.apiDataReducer);
-  const category = "name";
 
   useEffect(() => {
-    if (isNotEmptyObject(apiData)) {
+    if (Object.entries(apiData).length > 0) {
       setApiName(apiData.api);
       const _method = apiData.method.toUpperCase();
       setMethod(_method);
       capitalizeByIndex(apiData.path, [1, 8]);
       const splited = apiData.path.split("/");
       splited[1].toUpperCase();
-      splited[splited.length - 1] = splited[splited.length - 1].replace(
-        "{category}",
-        category,
-      );
+      splited[splited.length - 1] = splited[splited.length - 1].replace(/[\{\}']+/g,'');
       const _path = splited.join("/");
       setPath(_path);
     }

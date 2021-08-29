@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, memo } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useDispatch } from "react-redux";
 import GridCell from './GridCell';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -7,18 +7,15 @@ import { updateCurrentSectionMap } from '../actions/appActions'
 import { nanoid } from "nanoid";
 
 const RowItem = ({data}) => {
-    const [expand, setExpand] = useState(false);
+    const [expand, setExpand] = useState(true);
     const [btnIsDisabled, setBtnIsDesabled] = useState(true)
     const [innerRow, setInnerRow] = useState([]);
     const dispatch = useDispatch();
 
-    //console.log("RowItem>>>>", Object.entries(data));
     useEffect(() =>{
-        //[{"name": "category","pii": false,"masked": false,"type": "string"}]
         console.log("innerRow>>>", data.value);
         if(Array.isArray(data.value) && data.value.length){
             const dataMap = new Map(Object.entries(data.value[0]));
-            //console.log("entries>>>",  dataMap);
             setInnerRow(()=>{
                 const arr = []
                 dataMap.forEach((value, key)=>{
@@ -75,8 +72,8 @@ const RowItem = ({data}) => {
             </div>
            
             {
-                expand && 
-                      <div className="row-grid panel-shadow">
+                expand && data.value.length > 0 &&
+                      <div className="row-grid panel-shadow row-grid-height mg-t">
                           {
                               innerRow.map((item) => 
                                  <GridCell key={item.id} data={item} updateData={updateRowData}/>

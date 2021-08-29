@@ -1,8 +1,5 @@
-import React, { useState, useEffect, useCallback, memo } from "react";
-//import { useSelector, useDispatch } from "react-redux";
-//import { isNotEmptyObject, capitalize } from "../utils/common";
+import React, { useState, useEffect, memo } from "react";
 import {nanoid} from "nanoid";
-//import RowsManager from './RowsManager';
 import RowItem from './RowItem';
 
 const InfoGrid = ({dataMap}) => {
@@ -19,8 +16,6 @@ const InfoGrid = ({dataMap}) => {
     },[dataMap]);
 
     const updateColumns = (dataMap) => {
-       //console.log("updateColumns>>>",dataMap);
-         
        for(const [,value] of dataMap) {
          if(Array.isArray(value) && value.length > 0){
             setColumns(()=> Object.keys(value[0]).map(name =>
@@ -32,7 +27,6 @@ const InfoGrid = ({dataMap}) => {
     }
 
     const updateRows = (dataMap) => {      
-         //setRows(new Map(dataMap));
         setRows(()=>{
             const arr = [];
             dataMap.forEach((value, key)=>{
@@ -50,7 +44,10 @@ const InfoGrid = ({dataMap}) => {
                 <div className="row-grid">
                     {
                         columns.map((item) => 
-                            <div key={item.id} className="column-cell">{item.name}</div>
+                            <div key={item.id} 
+                            className={`column-cell ${item.name === "TYPE" ? "justify-ctr" : ""}`}>
+                                {item.name}
+                            </div>
                         )
                     }
                 </div>

@@ -1,8 +1,5 @@
 import React, { useState, useEffect, useCallback, memo } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-//import PropTypes from "prop-types";
 import NavTab from './NavTab';
-//import { capitalizeByIndex } from "../utils/common";
 
 const NavBar = ({ tabs, updateSectionName }) => {
   const [activeTab, setActiveTab] = useState(tabs[0].name);

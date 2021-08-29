@@ -4,7 +4,7 @@ import { currentSectionData as sectionData } from "../actions/appActions";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import NavBar from "./NavBar";
-import { isNotEmptyObject, capitalizeByIndex } from "../utils/common";
+import { capitalizeByIndex } from "../utils/common";
 import { nanoid } from "nanoid";
 import SearchBar from "./SearchBar";
 import InfoGrid from "./InfoGrid";
@@ -20,7 +20,7 @@ const MainArea = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (isNotEmptyObject(apiData)) {
+    if (Object.entries(apiData).length > 0) {
       setApiDataMap(new Map(Object.entries(apiData)));
     }
   }, [apiData]);
@@ -46,17 +46,12 @@ const MainArea = () => {
 
   const updateCurrentSectionData = (sectionName) =>{
     const obj = apiDataMap.get(sectionName);
-    //setSectionMap(new Map(Object.entries(obj)));
-    //const map = new Map(Object.entries(obj));
     dispatch(sectionData(obj));
   }
-  const sectionDataBySearchRes = (dataMap) => {
-    setSectionMap(new Map(dataMap));
-  }
-
-  const updateSectionName = (value) => {
+  
+  const updateSectionName = useCallback((value) => {
     setSectionName(value);
-  }
+  },[sectionName])
 
   if(isLoading){
     return <FontAwesomeIcon icon={faSpinner} size="2x" color="#6d6d6f" spin />;
@@ -71,7 +66,7 @@ const MainArea = () => {
       <div className="main-wrapper">
           {
             apiDataMap.size > 0 && sectionName &&
-            <SearchBar sectionName={sectionName} updateCurrentSectionMap={sectionDataBySearchRes}/>
+            <SearchBar sectionName={sectionName}/>
           }
           { 
              sectionMap.size > 0 &&

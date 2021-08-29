@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, memo } from "react";
+import React, { useState, useEffect } from "react";
 
 const GridCell = ({data, updateData}) => {
     const [value, setValue] = useState(data.value);
@@ -18,15 +18,18 @@ const GridCell = ({data, updateData}) => {
     }
 
     return (
-        <div className="row-cell">
+        <div className={`row-cell ${data.name === "type"? "justify-ctr" : ""}`}>
             {
-                (data.name === "pii" || data.name === "masked") &&
-                <div className={`pii-masked-cont ${data.name}-${value}`} onClick={onClickHandler}>
-                       {data.title}
+                data.name !== "name" 
+                ?
+                <div className={`pii-masked-cont ${data.name}${data.name !== "type" ? "-"+value : ""}`} onClick={onClickHandler}>
+                       {data.name !== "type" ? data.title : value}
                 </div>
+                :
+                <div className={"name"}>{value}</div>
 
             }
-            <div className={"row-cell"}>{value}</div>
+            
         </div>
     )
 }

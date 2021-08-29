@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { currentSectionData as sectionData} from "../actions/appActions";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 
-const SearchBar = ({sectionName, updateCurrentSectionMap}) => {
+const SearchBar = ({sectionName}) => {
   const currentSectionData = useSelector(state => state.currentSectionDataReducer);
   const apiData = useSelector(state => state.apiDataReducer);
   const [inputValue, setInputValue] = useState("");
@@ -13,7 +13,7 @@ const SearchBar = ({sectionName, updateCurrentSectionMap}) => {
   const [currentSectionMap, setCurrentSectionMap] = useState(new Map());
   const [warninMsg, setWarninMsg] = useState("");
   const dispatch = useDispatch();
-  //const dispatch = useDispatch();
+  
   useEffect(()=>{
       setCurrentSectionMap(new Map(Object.entries(currentSectionData)));
   },[currentSectionData]);
@@ -119,10 +119,15 @@ const SearchBar = ({sectionName, updateCurrentSectionMap}) => {
         <div className = "search-warning-msg">{warninMsg}</div>
       }
       <div className="serach-panel panel-shadow">
-        <FontAwesomeIcon icon={faSearch} color="#707070" size="1x"/>
-        <input className="search-field" type="text" onChange={onChangeHandle} value={inputValue} placeholder="Search"/>
-        <label>Show PII only</label>
-        <input type="checkbox" onChange={onChangeCheckboxState} checked={checked}/>
+        <div className="input-search-cont">
+           <FontAwesomeIcon icon={faSearch} color="#707070" size="1x"/>
+           <input className="search-field" type="text" onChange={onChangeHandle} value={inputValue} placeholder="Search"/>
+        </div>
+        <div className="checkbox-cont">
+          <input type="checkbox" onChange={onChangeCheckboxState} checked={checked}/>
+          <label>Show PII only</label>
+        </div>
+        
         <button className="search-apply-btn" disabled={btnDisabled} onClick={onApplySearchRes}>Apply</button>
       </div>
       <div className="reset-filter" onClick={onResetFilter}>Reset Filter</div>
