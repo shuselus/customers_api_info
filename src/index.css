@@ -147,6 +147,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  cursor: pointer;
 }
 .expand-btn {
   width: 16px;

@@ -1,18 +1,22 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { currentSectionData as sectionData} from "../actions/appActions";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 
-const SearchBar = ({apiDataMap, updateCurrentSectionMap, sectionName}) => {
+const SearchBar = ({sectionName, updateCurrentSectionMap}) => {
+  const currentSectionData = useSelector(state => state.currentSectionDataReducer);
+  const apiData = useSelector(state => state.apiDataReducer);
   const [inputValue, setInputValue] = useState("");
   const [checked, setChecked] = useState(false);
   const [btnDisabled, setBtnDisabled] = useState(true);
   const [currentSectionMap, setCurrentSectionMap] = useState(new Map());
+  const [warninMsg, setWarninMsg] = useState("");
+  const dispatch = useDispatch();
   //const dispatch = useDispatch();
   useEffect(()=>{
-      const obj = apiDataMap.get(sectionName);
-      setCurrentSectionMap(new Map(Object.entries(obj)));
-  },[apiDataMap]);
+      setCurrentSectionMap(new Map(Object.entries(currentSectionData)));
+  },[currentSectionData]);
 
   useEffect(()=>{
       setBtnDisabled(inputValue === "")
@@ -21,6 +25,7 @@ const SearchBar = ({apiDataMap, updateCurrentSectionMap, sectionName}) => {
   const onChangeHandle = (e) => {
     e.preventDefault();
     setInputValue(e.target.value);
+    setWarninMsg("")
   }
 
   const onChangeCheckboxState = (e) => {
@@ -36,38 +41,83 @@ const SearchBar = ({apiDataMap, updateCurrentSectionMap, sectionName}) => {
 
   const onApplySearchRes = (e) => {
     e.preventDefault();
-    const searchRes = {searchValue: inputValue, pii: checked }
-    //const apiDataMap = new Map(Object.entries(apiData));
-    let inputValueKey = "";
-    for(const [key, value]  of currentSectionMap){
-      console.log("onSearchApply>>>>", test(key, inputValue))
-      if(test(key, inputValue))
-          inputValueKey = key;
+    
+    let obj = {}
+    let arr = []
+    let types = []
+    let _currentSectionMap  = new Map(currentSectionMap);
+    
+    //////////FILTER BY CHECKBOX//////////////////////////
+    for(const [key, value]  of _currentSectionMap){
+      const _values = value.filter(item => item.pii === checked);
+      //get all types from the rows
+      value.forEach(item => types.push(item.type));
 
-         // break;
-         //  if(key.toLowerCase() === inputValue.toLowerCase()){
-         //    inputValueKey = key;
-         //    break;
-         //  }
+      if(_values.length){
+        obj[key] = _values;
+      }
     }
-    if(inputValueKey !== ""){
-      const newMap = new Map(currentSectionMap)
-      const _keys = [...newMap.keys()];
-      _keys.forEach(key => key !== inputValueKey && newMap.delete(key));
-      updateCurrentSectionMap(newMap)
-    }else{
-      setInputValue("");
+    
+    if(Object.entries(obj).length > 0){
+      _currentSectionMap = new Map(Object.entries(obj));
     }
+    types = [...new Set(types)];// get unic values
+
+    if(inputValue !== ""){
+
+      ////////////SEARCH BY PARAMETR TYPE///////////////////////////
+
+      let typeStr = ""
+      if(types.length && types.includes(inputValue)){
+        typeStr = types.filter(item => item === inputValue)[0];
+        obj = {}
+
+        for(const [key, value]  of _currentSectionMap){
+          const _values = value.filter(item => item.type === typeStr);       
+          if(_values.length){
+            obj[key] = _values;
+          } 
+        }
+        if(Object.entries(obj).length > 0){
+          dispatch(sectionData(obj));
+        }else{
+          setWarninMsg(`There is no matches was found`);
+        }
+        
+      }else{
+
+         //////////SEARCH BY FIELD NAME///////////////////////////////////
+
+        let inputValueKey = "";
+        for(const [key, value]  of _currentSectionMap){
+          console.log("onSearchApply>>>>", test(key, inputValue))
+          if(test(key, inputValue)) inputValueKey = key;
+        }
+        if(inputValueKey !== ""){
+          console.log("search>>>>",inputValueKey);
+          obj = {[inputValueKey] : _currentSectionMap.get(inputValueKey)};
+
+          dispatch(sectionData(obj));          
+        }else{
+          setWarninMsg(`input valid search term - (for example: ${[..._currentSectionMap.keys()].toString().split(",").join(", ")} or types: ${types.toString().split(",").join(", ")})`)
+        }
+      }
+    }
+    setInputValue("");
   }
   
   const onResetFilter = () => {
-    updateCurrentSectionMap(currentSectionMap);
+    dispatch(sectionData(apiData[sectionName]));
     setInputValue("");
     setChecked(false);
   }
 
   return (
     <div className="search-bar-container">
+      {
+        warninMsg &&
+        <div className = "search-warning-msg">{warninMsg}</div>
+      }
       <div className="serach-panel panel-shadow">
         <FontAwesomeIcon icon={faSearch} color="#707070" size="1x"/>
         <input className="search-field" type="text" onChange={onChangeHandle} value={inputValue} placeholder="Search"/>

@@ -2,12 +2,12 @@ import React, { useState, useEffect, useCallback, memo } from "react";
 //import { useSelector, useDispatch } from "react-redux";
 //import { isNotEmptyObject, capitalize } from "../utils/common";
 import {nanoid} from "nanoid";
-import RowsManager from './RowsManager';
+//import RowsManager from './RowsManager';
 import RowItem from './RowItem';
 
 const InfoGrid = ({dataMap}) => {
     const [columns, setColumns] = useState([]);
-    const [rows, setRows] = useState([...dataMap]);
+    const [rows, setRows] = useState([]);
     
     console.log("InfoGrid>>>>>data ", dataMap);
 
@@ -32,19 +32,35 @@ const InfoGrid = ({dataMap}) => {
     }
 
     const updateRows = (dataMap) => {      
-         setRows([...dataMap]);
+         //setRows(new Map(dataMap));
+        setRows(()=>{
+            const arr = [];
+            dataMap.forEach((value, key)=>{
+                console.log(key ,":", value);
+                    arr.push({id: nanoid(), name: key, value:value});
+            })
+            return arr;
+        });
     }
     
     return (
         <div className="info-grid-container">
-              {
-                columns?.length &&
-                <RowsManager data={columns} type="columns"/>
-              }
-              {
-                 rows?.length &&
-                <RowsManager data={rows} type="rows"/>
-              }
+            {
+            columns?.length &&
+                <div className="row-grid">
+                    {
+                        columns.map((item) => 
+                            <div key={item.id} className="column-cell">{item.name}</div>
+                        )
+                    }
+                </div>
+            }
+            {
+                rows.length &&
+                    rows.map( item => 
+                        <RowItem key={item.id} data={item}/> 
+                )
+            }
         </div>
     )
 }

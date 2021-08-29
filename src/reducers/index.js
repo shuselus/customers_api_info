@@ -1,14 +1,17 @@
 import { combineReducers } from 'redux';
 import apiDataReducer from './apiDataReducer';
 import appDataReducer from './appDataReducer';
-//import selectedItemsReducer from './selectedItemsReducer';
+import currentSectionDataReducer from './currentSectionDataReducer';
+import currentSectionMapReducer from './currentSectionMapReducer';
+
 
 
 
 
 const rootReducer = combineReducers({
     apiDataReducer: apiDataReducer,
-    appDataReducer: appDataReducer
+    currentSectionDataReducer: currentSectionDataReducer,
+    currentSectionMapReducer: currentSectionMapReducer,
 });
 
 export default rootReducer;

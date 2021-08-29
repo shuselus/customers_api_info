@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, memo } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { currentSectionData as sectionData } from "../actions/appActions";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import NavBar from "./NavBar";
@@ -10,11 +11,13 @@ import InfoGrid from "./InfoGrid";
 
 const MainArea = () => {
   const apiData = useSelector(state => state.apiDataReducer);
+  const currentSectionData = useSelector(state => state.currentSectionDataReducer);
+  const [sectionName, setSectionName] = useState("")
   const [tabs, setTabs] = useState([]);
   const [apiDataMap, setApiDataMap] = useState(new Map());
-  const [currentSectionMap, setCurrentSectionMap] = useState(new Map());
-  const { sectionName } = useSelector(state => state.appDataReducer);
+  const [sectionMap, setSectionMap] = useState(new Map());
   const [isLoading, setIsLoading] = useState(true);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (isNotEmptyObject(apiData)) {
@@ -36,13 +39,25 @@ const MainArea = () => {
     }
   },[sectionName, apiDataMap]);
 
+  useEffect(()=>{
+    const dataMap = new Map(Object.entries(currentSectionData))
+    setSectionMap(dataMap);
+  },[currentSectionData])
+
   const updateCurrentSectionData = (sectionName) =>{
     const obj = apiDataMap.get(sectionName);
-    setCurrentSectionMap(new Map(Object.entries(obj)));
+    //setSectionMap(new Map(Object.entries(obj)));
+    //const map = new Map(Object.entries(obj));
+    dispatch(sectionData(obj));
   }
   const sectionDataBySearchRes = (dataMap) => {
-    setCurrentSectionMap(new Map(dataMap));
+    setSectionMap(new Map(dataMap));
   }
+
+  const updateSectionName = (value) => {
+    setSectionName(value);
+  }
+
   if(isLoading){
     return <FontAwesomeIcon icon={faSpinner} size="2x" color="#6d6d6f" spin />;
   }
@@ -51,16 +66,16 @@ const MainArea = () => {
       
           {
             tabs?.length &&
-            <NavBar tabs={tabs} />
+            <NavBar tabs={tabs} updateSectionName={updateSectionName} />
           }
       <div className="main-wrapper">
           {
-            apiDataMap.size && sectionName &&
-            <SearchBar apiDataMap={apiDataMap} updateCurrentSectionMap={sectionDataBySearchRes} sectionName={sectionName}/>
+            apiDataMap.size > 0 && sectionName &&
+            <SearchBar sectionName={sectionName} updateCurrentSectionMap={sectionDataBySearchRes}/>
           }
           { 
-             currentSectionMap.size &&
-              <InfoGrid dataMap={currentSectionMap}/>
+             sectionMap.size > 0 &&
+              <InfoGrid dataMap={sectionMap}/>
           }
       </div>   
     </div>
